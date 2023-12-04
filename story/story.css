@@ -1,0 +1,5 @@
+.replay-button-container {
+    position: fixed; /* 고정 위치 */
+    right: 10px; /* 오른쪽에서 10px 떨어진 곳에 위치 */
+    bottom: 10px; /* 하단에서 10px 떨어진 곳에 위치 */
+}
