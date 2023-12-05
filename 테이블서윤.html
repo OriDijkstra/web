@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="노드 선택을 통해 다익스트라 알고리즘을 체험해보세요">
+    <meta property="og:title" content="노드선택 - 오리집가고싶다익">
+    <meta property="og:description" content="노드 선택을 통해 다익스트라 알고리즘을 체험해보세요">
+
+    <title>노드선택 - 오리집가고싶다익</title>
+    <link rel="stylesheet" type="text/css" href="씨꾸서윤.css">
+    <style>
+
+    table {
+      border-collapse: collapse;
+      width : 100%;
+      margin-top : 20px;
+    }
+    th, td {
+      border: 1px solid black;
+      padding: 10px;
+      text-align: center;
+    }
+    .button-container {
+      margin-top: 20px;
+      text-align: center;
+    }
+    button {
+      margin-right: 10px;
+    }
+    .inline-element {
+            display: inline-block;
+        }
+  </style>
+
+</head>
+
+<body>
+<div class="inline-element">
+    <button id="connectButton">DIJKSTRA기기 연결</button>
+</div>
+<div class="inline-element"></div>
+    <label for="nInput">출발 노드:</label>
+    <input type="number" id="nInput" placeholder="출발노드" min="1" max="10" disabled /><br><br>
+</div>
+<div class="inline-element">
+    <label for="mInput">도착 노드:</label>
+    <input type="number" id="mInput" placeholder="도착노드" min="1" max="10" disabled /><br><br>
+</div>
+<div class="inline-element">
+    <button id="sendButton" onclick="calculatePath()" disabled>Send Numbers</button>
+</div>
+    <p id="result"></p>
+
+
+<!--RUN 버튼과 send Numbers 버튼을 합치자. 테스트 필요.-->
+
+    <div class="hero d-flex align-items-center justify-content-center" style="background-color: #333333;">
+        <div class="container text-center" style="text-align: center;">
+            <h1 class="display-4 text-light" style="color: white;">출발지와 도착지를 선택하세요.</h1>
+            <p class="sub-description" style="color: white;">출발노드는 빨간색, 도착노드는 파란색으로 표시됩니다.</p>
+            <p class="lead text-light" style="color: white;">위에 버튼을 통해 블루투스를 연결하고 노드 번호를 전송하세요.</p>
+        </div>
+    </div>
+    <div class="graph-layout">
+        <svg id="lines"></svg>
+        <button id="node1">1</button><span class="node-label" id="label1"></span>
+        <button id="node2">2</button><span class="node-label" id="label2"></span>
+        <button id="node3">3</button><span class="node-label" id="label3"></span>
+        <button id="node4">4</button><span class="node-label" id="label4"></span>
+        <button id="node5">5</button><span class="node-label" id="label5"></span>
+        <button id="node6">6</button><span class="node-label" id="label6"></span>
+        <button id="node7">7</button><span class="node-label" id="label7"></span>
+        <button id="node8">8</button><span class="node-label" id="label8"></span>
+        <button id="node9">9</button><span class="node-label" id="label9"></span>
+        <button id="node10">10</button><span class="node-label" id="label10"></span>
+    </div>
+    <!-- 여기에 노드 선택과 관련된 내용 및 기능 추가 -->
+    <!-- 예: 노드 선택 폼, 인터랙티브 요소 등 -->
+    <!-- 홈 버튼 수정 -->
+    <div class="home-button-container">
+        <a href="../index.html">
+           <!-- <button class="home-button">메인 페이지로 돌아가기</button>-->
+        </a>
+    </div>
+
+
+<!--<div class="button-container">
+  <button id="startButton">시작</button>
+  <button id="stopButton">멈춤</button>
+</div>  -->
+
+<table id="dynamicTable">
+  <thead>
+    <tr>
+      <th>for 루프</th>
+      <th>선택된 정점</th>
+      <th>S=true인 정점</th>
+      <th>[1]</th>
+      <th>[2]</th>
+      <th>[3]</th>
+      <th>[4]</th>
+      <th>[5]</th>
+      <th>[6]</th>
+      <th>[7]</th>
+      <th>[8]</th>
+      <th>[9]</th>
+      <th>[10]</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- 행들은 여기에 추가될 것입니다. -->
+    <tr>
+      <td id="cell1_1"></td>
+      <td id="cell2_1"></td>
+      <td id="cell3_1"></td>
+      <td id="cell4_1"></td>
+      <td id="cell5_1"></td>
+      <td id="cell6_1"></td>
+      <td id="cell7_1"></td>
+      <td id="cell8_1"></td>
+      <td id="cell9_1"></td>
+      <td id="cell10_1"></td>
+      <td id="cell11_1"></td>
+      <td id="cell12_1"></td>
+      <td id="cell13_1"></td>
+    </tr>
+  </tbody>
+</table>
+<script>
+
+    let startNode = null;
+            let endNode = null;
+    
+            function updateLabel(node, label, text) {
+                const labelElement = document.getElementById(label);
+                labelElement.textContent = text;
+            }
+    
+            function selectNode(node) {
+                const nodeId = node.id;
+                const labelId = 'label' + nodeId.substring(4);
+    
+                if (!startNode) {
+                    startNode = node;
+                    node.style.backgroundColor = 'red';
+                   // updateLabel(node, labelId, '시작 노드');
+                } 
+                else if (node === startNode) {
+                    startNode.style.backgroundColor = '';
+                    updateLabel(node, labelId, '');
+                    startNode = null;
+                } 
+                else if (!endNode && node !== startNode) {
+                    endNode = node;
+                    node.style.backgroundColor = 'blue';
+                    //updateLabel(node, labelId, '종료 노드');
+                } 
+                else if (node === endNode) {
+                    endNode.style.backgroundColor = '';
+                    updateLabel(node, labelId, '');
+                    endNode = null;
+                }
+            }
+    
+            document.querySelectorAll('button[id^="node"]').forEach(node => {
+                node.addEventListener('click', () => selectNode(node));
+            });
+        </script>
+    
+
+<script src="테이블서윤.js"></script>
+<script src="데이타서윤.js"></script>
+<script src="블루원본.js"></script>
+
+</body>
